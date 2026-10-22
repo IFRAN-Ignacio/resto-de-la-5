@@ -1,0 +1,118 @@
+@startuml
+!include style.iuml
+title Modelo de datos (DER) - MySQL
+hide circle
+skinparam linetype ortho
+entity empleado {
+  *id : INT <<PK>>
+  --
+  nombre, apellido : VARCHAR
+  dni : VARCHAR <<UNIQUE>>
+  usuario : VARCHAR <<UNIQUE>>
+  contrasena_hash : VARCHAR
+  puesto : ENUM
+  activo : BOOLEAN
+}
+entity mesa {
+  *id : INT <<PK>>
+  --
+  numero : INT <<UNIQUE>>
+  capacidad : INT
+  estado : ENUM
+  mozo_id : INT <<FK>>
+}
+entity categoria {
+  *id : INT <<PK>>
+  --
+  nombre : VARCHAR
+}
+entity plato {
+  *id : INT <<PK>>
+  --
+  nombre, descripcion : VARCHAR
+  precio : DECIMAL
+  activo : BOOLEAN
+  categoria_id : INT <<FK>>
+}
+entity insumo {
+  *id : INT <<PK>>
+  --
+  nombre, unidad : VARCHAR
+  stock_actual : DECIMAL
+  stock_minimo : DECIMAL
+}
+entity receta {
+  *plato_id : INT <<FK>>
+  *insumo_id : INT <<FK>>
+  --
+  cantidad : DECIMAL
+}
+entity cliente {
+  *id : INT <<PK>>
+  --
+  nombre, telefono : VARCHAR
+}
+entity pedido {
+  *id : INT <<PK>>
+  --
+  tipo : ENUM(MESA, DELIVERY)
+  estado : ENUM
+  fecha_hora : DATETIME
+  prioridad : INT
+  mesa_id : INT <<FK>> NULL
+  mozo_id : INT <<FK>> NULL
+  cliente_id : INT <<FK>> NULL
+  direccion, observaciones : VARCHAR
+}
+entity detalle_pedido {
+  *id : INT <<PK>>
+  --
+  pedido_id : INT <<FK>>
+  plato_id : INT <<FK>>
+  cantidad : INT
+  precio_unitario : DECIMAL
+}
+entity envio {
+  *id : INT <<PK>>
+  --
+  pedido_id : INT <<FK>>
+  modalidad : VARCHAR
+  costo : DECIMAL
+  estado : ENUM
+  repartidor_id : INT <<FK>>
+  hora_salida, hora_entrega : DATETIME
+}
+entity pago {
+  *id : INT <<PK>>
+  --
+  pedido_id : INT <<FK>>
+  medio : VARCHAR
+  monto : DECIMAL
+  estado : ENUM
+  referencia_externa : VARCHAR
+  fecha_hora : DATETIME
+}
+entity movimiento_stock {
+  *id : INT <<PK>>
+  --
+  insumo_id : INT <<FK>>
+  pedido_id : INT <<FK>> NULL
+  tipo : ENUM(DESCUENTO, REINGRESO, INGRESO)
+  cantidad : DECIMAL
+  fecha_hora : DATETIME
+}
+empleado ||--o{ mesa
+categoria ||--o{ plato
+plato ||--o{ receta
+insumo ||--o{ receta
+mesa |o--o{ pedido
+cliente |o--o{ pedido
+empleado |o--o{ pedido
+pedido ||--|{ detalle_pedido
+plato ||--o{ detalle_pedido
+pedido ||--o| envio
+empleado |o--o{ envio
+pedido ||--o{ pago
+insumo ||--o{ movimiento_stock
+pedido |o--o{ movimiento_stock
+@enduml

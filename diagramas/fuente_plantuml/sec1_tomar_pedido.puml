@@ -1,0 +1,46 @@
+@startuml
+!include style.iuml
+title Diagrama de secuencia 1 - Tomar pedido de mesa (con control de stock)
+autonumber
+actor Mozo
+participant "UI Mozo\n(celular)" as UI
+participant "PedidoController" as PC
+participant "GestorPedidos" as GP
+participant "GestorStock" as GS
+participant ":Insumo" as INS
+participant ":PedidoMesa" as PM
+participant "Cola de cocina" as CC
+
+Mozo -> UI : elegir mesa y platos
+UI -> PC : tomarPedido(mesaId, items)
+activate PC
+PC -> GP : crearPedidoMesa(mesa, items)
+activate GP
+GP -> GS : verificarDisponibilidad(items)
+activate GS
+loop por cada insumo de la receta
+  GS -> INS : consultar stockActual
+  INS --> GS : cantidad
+end
+GS --> GP : resultado (sí / no)
+deactivate GS
+alt hay stock de todo
+  GP -> PM ** : crear(mesa, mozo, items)
+  GP -> PM : confirmar()
+  GP -> GS : descontar(pedido)
+  activate GS
+  GS -> INS : descontar(cantidad)
+  GS --> GP : stock actualizado
+  deactivate GS
+  GP -> CC : agregar(pedido)
+  GP --> PC : pedido CONFIRMADO
+  PC --> UI : "Pedido enviado a cocina"
+  UI --> Mozo : mesa en estado Ocupada
+else falta algún insumo
+  GP --> PC : error: plato sin stock
+  PC --> UI : "Plato sin stock"
+  UI --> Mozo : marca el plato como no disponible
+end
+deactivate GP
+deactivate PC
+@enduml

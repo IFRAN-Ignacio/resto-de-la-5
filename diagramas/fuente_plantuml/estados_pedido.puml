@@ -1,0 +1,25 @@
+@startuml
+!include style.iuml
+title Diagrama de estados - Pedido
+[*] --> PendientePago : pedido delivery creado
+[*] --> Confirmado : pedido de mesa enviado
+PendientePago : pago electrónico en proceso
+PendientePago --> Confirmado : pago aprobado /\ndescontar stock
+PendientePago --> PendientePago : pago rechazado /\nreintentar
+PendientePago --> Cancelado : cliente desiste
+Confirmado --> EnPreparacion : chef la toma
+EnPreparacion --> Listo : chef despacha
+Confirmado --> Cancelado : cancelar /\nreingresar stock
+EnPreparacion --> Cancelado : cancelar /\nreingresar stock
+Listo --> Cerrado : [mesa] mozo cobra
+Listo --> EnCamino : [delivery] repartidor retira
+Listo --> Entregado : [take away] cliente retira
+EnCamino --> Entregado : repartidor entrega
+Entregado --> [*]
+Cerrado --> [*]
+Cancelado --> [*]
+note right of Cancelado
+  Si había un pago aprobado
+  se ofrece el reembolso.
+end note
+@enduml

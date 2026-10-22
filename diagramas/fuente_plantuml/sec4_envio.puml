@@ -1,0 +1,31 @@
+@startuml
+!include style.iuml
+title Diagrama de secuencia 4 - Despachar, asignar repartidor y entregar
+autonumber
+actor Chef
+actor Administrador as AD
+actor Repartidor as R
+participant "UI" as UI
+participant "EnvioController" as EC
+participant ":PedidoDelivery" as PD
+participant ":Envio" as E
+
+Chef -> UI : despachar orden
+UI -> EC : despachar(pedidoId)
+EC -> PD : getPago().estado
+PD --> EC : APROBADO
+EC -> PD : marcarListo()
+note right of PD : estado = LISTO
+AD -> UI : asignar repartidor
+UI -> EC : asignarRepartidor(pedidoId, repartidorId)
+EC -> E : asignar(repartidor)
+R -> UI : retirar pedido
+UI -> EC : actualizarEstado(envioId, EN_CAMINO)
+EC -> E : setEstado(EN_CAMINO), horaSalida = ahora
+EC -> PD : estado = EN_CAMINO
+R -> UI : confirmar entrega
+UI -> EC : actualizarEstado(envioId, ENTREGADO)
+EC -> E : setEstado(ENTREGADO), horaEntrega = ahora
+EC -> PD : estado = ENTREGADO
+EC --> UI : "Pedido entregado"
+@enduml

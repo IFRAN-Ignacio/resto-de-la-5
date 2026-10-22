@@ -1,0 +1,33 @@
+@startuml
+!include style.iuml
+title Casos de uso - Atención en salón y cocina
+left to right direction
+actor "Mozo" as M
+actor "Chef" as C
+actor "Pasarela de pago\n(sistema externo)" as P
+rectangle "Sistema El restó de la 5" as SYS {
+  usecase "Ver mis mesas" as CU06
+  usecase "Tomar pedido de mesa" as CU07
+  usecase "Ver panel común" as CU08
+  usecase "Verificar disponibilidad\nde stock" as CU19
+  usecase "Descontar stock" as CU21
+  usecase "Priorizar órdenes" as CU09
+  usecase "Despachar orden" as CU10
+  usecase "Cobrar mesa" as CU11
+  usecase "Procesar pago\nelectrónico" as CU14
+  usecase "Cancelar pedido" as CU16
+  usecase "Reingresar stock" as CU22
+}
+M --> CU06
+M --> CU07
+M --> CU08
+M --> CU11
+M --> CU16
+C --> CU09
+C --> CU10
+CU07 .> CU19 : <<include>>
+CU07 .> CU21 : <<include>>
+CU14 .> CU11 : <<extend>>\n[medio electrónico]
+CU16 .> CU22 : <<include>>
+CU14 --> P
+@enduml

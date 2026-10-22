@@ -1,0 +1,98 @@
+@startuml
+!include style.iuml
+hide empty members
+skinparam nodesep 40
+skinparam ranksep 50
+title Diagrama de clases (2/2) - Incremento: envíos y pagos (patrón Strategy / principio abierto-cerrado)
+package "Pedidos" {
+  abstract class Pedido {
+    - estado: EstadoPedido
+    + calcularTotal(): decimal
+    + confirmar(): void
+    + cancelar(): void
+  }
+  class PedidoMesa
+  class PedidoDelivery {
+    - observaciones: String
+    + calcularTotal(): decimal
+  }
+  class GestorPedidos {
+    + crearPedidoDelivery(cliente, items, modalidad): PedidoDelivery
+    + cancelar(p: Pedido): void
+  }
+  Pedido <|-- PedidoMesa
+  Pedido <|-- PedidoDelivery
+}
+package "Envíos (patrón Strategy)" {
+  class Envio {
+    - estado: EstadoEnvio
+    - costo: decimal
+    - horaSalida: DateTime
+    - horaEntrega: DateTime
+  }
+  enum EstadoEnvio {
+    EN_PREPARACION
+    EN_CAMINO
+    ENTREGADO
+  }
+  interface ModalidadEnvio <<interface>> {
+    + calcularCosto(d: Direccion): decimal
+  }
+  class MotoPropia
+  class CadeteriaExterna
+  class RetiroEnLocal
+  ModalidadEnvio <|.. MotoPropia
+  ModalidadEnvio <|.. CadeteriaExterna
+  ModalidadEnvio <|.. RetiroEnLocal
+}
+package "Pagos (patrón Strategy)" {
+  class Pago {
+    - monto: decimal
+    - estado: EstadoPago
+    - referenciaExterna: String
+    - fechaHora: DateTime
+  }
+  enum EstadoPago {
+    PENDIENTE
+    APROBADO
+    RECHAZADO
+    REEMBOLSADO
+  }
+  interface PasarelaPago <<interface>> {
+    + cobrar(monto: decimal): ResultadoPago
+    + reembolsar(p: Pago): ResultadoPago
+  }
+  class PasarelaTarjeta
+  class PasarelaMercadoPago
+  class PasarelaTransferencia
+  class PagoEfectivo
+  class ServicioPagos {
+    + procesarPago(p: Pedido, medio: PasarelaPago): Pago
+    + reembolsar(p: Pago): void
+  }
+  PasarelaPago <|.. PasarelaTarjeta
+  PasarelaPago <|.. PasarelaMercadoPago
+  PasarelaPago <|.. PasarelaTransferencia
+  PasarelaPago <|.. PagoEfectivo
+}
+PedidoDelivery "1" *-- "1" Envio
+Envio "*" --> "1" ModalidadEnvio : usa >
+Envio "*" --> "0..1" Repartidor
+class Repartidor
+Envio --> EstadoEnvio
+Pedido "1" -- "0..*" Pago
+Pago "*" --> "1" PasarelaPago : procesado por >
+Pago --> EstadoPago
+GestorPedidos ..> ServicioPagos : usa
+ServicioPagos ..> PasarelaPago : delega
+note bottom of ModalidadEnvio
+  Para agregar una modalidad nueva
+  se crea otra clase que implemente
+  la interfaz: no se toca Pedido ni Envio.
+end note
+note bottom of PasarelaPago
+  Cada pasarela adapta la API externa
+  (tarjeta, MercadoPago, transferencia)
+  a una misma interfaz: cobrar / reembolsar.
+end note
+@enduml

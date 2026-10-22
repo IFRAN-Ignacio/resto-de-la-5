@@ -1,0 +1,17 @@
+@startuml
+!include style.iuml
+title Actores del sistema «El restó de la 5»
+actor "Empleado" as E
+actor "Administrador" as A
+actor "Mozo" as M
+actor "Chef" as C
+actor "Repartidor" as R
+actor "Cliente" as CL
+actor "Pasarela de pago\n(sistema externo)" as P
+A -up-|> E
+M -up-|> E
+C -up-|> E
+R -up-|> E
+note right of E : Actor abstracto.\nTodo empleado puede\n«Iniciar sesión».
+note right of P : Actor secundario:\nTarjeta, MercadoPago\no Transferencia.
+@enduml

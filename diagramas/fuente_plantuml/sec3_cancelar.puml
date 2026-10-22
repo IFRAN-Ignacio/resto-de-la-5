@@ -1,0 +1,40 @@
+@startuml
+!include style.iuml
+title Diagrama de secuencia 3 - Cancelar pedido (reingreso de stock y reembolso)
+autonumber
+actor Administrador as AD
+participant "UI Admin" as UI
+participant "PedidoController" as PC
+participant "GestorPedidos" as GP
+participant ":Pedido" as P
+participant "GestorStock" as GS
+participant "ServicioPagos" as SP
+participant ":PasarelaPago" as PP
+
+AD -> UI : cancelar pedido
+UI -> PC : cancelar(pedidoId)
+activate PC
+PC -> GP : cancelar(pedido)
+activate GP
+GP -> P : getEstado()
+P --> GP : estado
+alt no fue despachado (CONFIRMADO / EN_PREPARACION)
+  GP -> P : cancelar()
+  note right of P : estado = CANCELADO
+  GP -> GS : reingresar(pedido)
+  GS --> GP : stock restablecido
+  opt el pedido tenía un pago APROBADO
+    GP -> SP : reembolsar(pago)
+    SP -> PP : reembolsar(pago)
+    PP --> SP : reembolso OK
+    SP --> GP : pago REEMBOLSADO
+  end
+  GP --> PC : cancelado
+  PC --> UI : "Pedido cancelado, stock reingresado"
+else ya fue despachado
+  GP --> PC : error
+  PC --> UI : "No se puede cancelar un pedido despachado"
+end
+deactivate GP
+deactivate PC
+@enduml

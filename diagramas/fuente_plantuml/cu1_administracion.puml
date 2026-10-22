@@ -1,0 +1,26 @@
+@startuml
+!include style.iuml
+title Casos de uso - Administración del restó
+left to right direction
+actor "Empleado" as E
+actor "Administrador" as A
+A -up-|> E
+rectangle "Sistema El restó de la 5" as SYS {
+  usecase "Iniciar sesión" as CU01
+  usecase "Gestionar personal" as CU02
+  usecase "Gestionar mesas" as CU03
+  usecase "Asignar mozo a mesa" as CU04
+  usecase "Gestionar carta de platos" as CU05
+  usecase "Administrar insumos\ny recetas" as CU17
+  usecase "Registrar ingreso\nde mercadería" as CU18
+  usecase "Consultar reportes\nde ventas" as CU20
+}
+E --> CU01
+A --> CU02
+A --> CU03
+A --> CU05
+A --> CU17
+A --> CU20
+CU04 .> CU03 : <<extend>>\n[asignar mozo]
+CU18 .> CU17 : <<extend>>\n[llegó mercadería]
+@enduml

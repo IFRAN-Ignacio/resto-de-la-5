@@ -1,0 +1,33 @@
+@startuml
+!include style.iuml
+title Casos de uso - Incremento: Delivery, pagos electrónicos y stock
+left to right direction
+actor "Cliente" as CL
+actor "Administrador" as A
+actor "Repartidor" as R
+actor "Pasarela de pago\n(sistema externo)" as P
+rectangle "Sistema El restó de la 5" as SYS {
+  usecase "Realizar pedido\na domicilio" as CU12
+  usecase "Verificar disponibilidad\nde stock" as CU19
+  usecase "Calcular costo\nde envío" as CU13
+  usecase "Procesar pago\nelectrónico" as CU14
+  usecase "Descontar stock" as CU21
+  usecase "Asignar repartidor" as CU15
+  usecase "Actualizar estado\ndel envío" as CU23
+  usecase "Cancelar pedido" as CU16
+  usecase "Reingresar stock" as CU22
+  usecase "Reembolsar pago" as CU24
+}
+CL --> CU12
+A --> CU15
+A --> CU16
+R --> CU23
+CU12 .> CU19 : <<include>>
+CU12 .> CU13 : <<include>>
+CU12 .> CU14 : <<include>>
+CU14 .> CU21 : <<include>>\n(si se aprueba)
+CU16 .> CU22 : <<include>>
+CU24 .> CU16 : <<extend>>\n[pedido pagado]
+CU14 --> P
+CU24 --> P
+@enduml

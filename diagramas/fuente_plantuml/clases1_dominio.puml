@@ -1,0 +1,143 @@
+@startuml
+!include style.iuml
+hide empty members
+skinparam nodesep 40
+skinparam ranksep 50
+title Diagrama de clases (1/2) - Dominio: personal, salón, pedidos y stock
+package "Personal" {
+  abstract class Empleado {
+    - id: int
+    - nombre: String
+    - apellido: String
+    - dni: String
+    - usuario: String
+    - contrasenaHash: String
+    - activo: boolean
+    + iniciarSesion(usuario, contrasena): boolean
+    + darDeBaja(): void
+  }
+  class Administrador
+  class Mozo {
+    + verMisMesas(): List<Mesa>
+  }
+  class Chef {
+    + priorizar(o: Pedido, prioridad: int): void
+    + despachar(o: Pedido): void
+  }
+  class Cocinero
+  class Repartidor {
+    - telefono: String
+    + actualizarEnvio(e: Envio, estado: EstadoEnvio): void
+  }
+  Empleado <|-- Administrador
+  Empleado <|-- Mozo
+  Empleado <|-- Chef
+  Empleado <|-- Cocinero
+  Empleado <|-- Repartidor
+}
+package "Salón y carta" {
+  class Mesa {
+    - numero: int
+    - capacidad: int
+    - estado: EstadoMesa
+    + asignarMozo(m: Mozo): void
+  }
+  class Plato {
+    - nombre: String
+    - descripcion: String
+    - precio: decimal
+    - activo: boolean
+    + estaDisponible(cantidad: int): boolean
+  }
+  class Categoria {
+    - nombre: String
+  }
+  enum EstadoMesa {
+    LIBRE
+    OCUPADA
+    ESPERANDO_PEDIDO
+    PARA_COBRAR
+  }
+}
+package "Stock" {
+  class Insumo {
+    - nombre: String
+    - unidad: String
+    - stockActual: decimal
+    - stockMinimo: decimal
+    + descontar(cant: decimal): void
+    + reingresar(cant: decimal): void
+  }
+  class ItemReceta {
+    - cantidad: decimal
+  }
+  class GestorStock {
+    + verificarDisponibilidad(items: List<DetallePedido>): boolean
+    + descontar(p: Pedido): void
+    + reingresar(p: Pedido): void
+  }
+}
+package "Pedidos" {
+  abstract class Pedido {
+    - id: int
+    - fechaHora: DateTime
+    - estado: EstadoPedido
+    - prioridad: int
+    + agregarItem(p: Plato, cant: int): void
+    + calcularTotal(): decimal
+    + confirmar(): void
+    + cancelar(): void
+  }
+  class PedidoMesa
+  class PedidoDelivery {
+    - observaciones: String
+    + calcularTotal(): decimal
+  }
+  class DetallePedido {
+    - cantidad: int
+    - precioUnitario: decimal
+    + subtotal(): decimal
+  }
+  class Cliente {
+    - nombre: String
+    - telefono: String
+  }
+  class Direccion {
+    - calle: String
+    - numero: String
+    - zona: String
+  }
+  enum EstadoPedido {
+    PENDIENTE_PAGO
+    CONFIRMADO
+    EN_PREPARACION
+    LISTO
+    EN_CAMINO
+    ENTREGADO
+    CERRADO
+    CANCELADO
+  }
+  class GestorPedidos {
+    + crearPedidoMesa(mesa, items): PedidoMesa
+    + crearPedidoDelivery(cliente, items, modalidad): PedidoDelivery
+    + cancelar(p: Pedido): void
+  }
+  Pedido <|-- PedidoMesa
+  Pedido <|-- PedidoDelivery
+}
+Mozo "0..1" -- "*" Mesa : atiende >
+Plato "*" --> "1" Categoria
+Plato "1" *-- "1..*" ItemReceta : receta
+ItemReceta "*" --> "1" Insumo
+Mesa "1" -- "*" PedidoMesa
+PedidoMesa "*" --> "1" Mozo : tomado por
+Pedido "1" *-- "1..*" DetallePedido
+DetallePedido "*" --> "1" Plato
+PedidoDelivery "*" --> "1" Cliente
+PedidoDelivery "*" --> "0..1" Direccion
+Mesa --> EstadoMesa
+Pedido --> EstadoPedido
+GestorPedidos ..> Pedido : crea
+GestorPedidos ..> GestorStock : usa
+GestorStock ..> Insumo : actualiza
+@enduml

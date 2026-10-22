@@ -1,0 +1,41 @@
+@startuml
+!include style.iuml
+title Diagrama de actividad - Pedido a domicilio
+|Cliente|
+start
+:Elegir platos;
+|Sistema|
+if (¿Hay stock de todos los platos?) then (sí)
+else (no)
+  :Mostrar plato "Sin stock";
+  |Cliente|
+  :Cambiar el pedido;
+  stop
+endif
+|Cliente|
+:Ingresar dirección, observaciones\ny modalidad de entrega;
+|Sistema|
+:Calcular costo de envío\nsegún la modalidad;
+:Mostrar total;
+|Cliente|
+:Elegir medio de pago;
+|Pasarela de pago|
+:Procesar cobro;
+|Sistema|
+if (¿Pago aprobado?) then (sí)
+  :Confirmar pedido;
+  :Descontar insumos del stock;
+else (no)
+  :Informar rechazo;
+  |Cliente|
+  :Reintentar con otro medio;
+  stop
+endif
+|Cocina|
+:Preparar pedido (En preparación);
+:Despachar (Listo);
+|Repartidor|
+:Retirar pedido (En camino);
+:Entregar pedido (Entregado);
+stop
+@enduml

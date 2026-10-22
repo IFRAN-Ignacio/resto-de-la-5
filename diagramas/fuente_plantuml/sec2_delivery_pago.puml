@@ -1,0 +1,52 @@
+@startuml
+!include style.iuml
+title Diagrama de secuencia 2 - Pedido a domicilio con pago electrónico
+autonumber
+actor Cliente
+participant "UI Web\nCliente" as UI
+participant "PedidoController" as PC
+participant "GestorPedidos" as GP
+participant "GestorStock" as GS
+participant ":ModalidadEnvio\n(MotoPropia)" as ME
+participant ":PedidoDelivery" as PD
+participant "ServicioPagos" as SP
+participant ":PasarelaPago\n(MercadoPago)" as PP
+participant "Cola de cocina" as CC
+
+Cliente -> UI : elegir platos, dirección y modalidad
+UI -> PC : crearPedidoDelivery(datos)
+activate PC
+PC -> GP : crearPedidoDelivery(cliente, items, modalidad)
+activate GP
+GP -> GS : verificarDisponibilidad(items)
+GS --> GP : disponible = true
+GP -> ME : calcularCosto(direccion)
+ME --> GP : costoEnvio
+GP -> PD ** : crear(cliente, items, envio)
+note right of PD : estado = PENDIENTE_PAGO
+GP --> PC : pedido + total
+deactivate GP
+PC --> UI : mostrar total (platos + envío)
+deactivate PC
+Cliente -> UI : pagar con MercadoPago
+UI -> PC : pagar(pedidoId, medio)
+activate PC
+PC -> SP : procesarPago(pedido, medio)
+activate SP
+SP -> PP : cobrar(monto)
+PP --> SP : resultado
+alt pago APROBADO
+  SP -> PD : confirmar()
+  note right of PD : estado = CONFIRMADO
+  SP -> GS : descontar(pedido)
+  SP -> CC : agregar(pedido)
+  SP --> PC : pago aprobado
+  PC --> UI : "Pedido confirmado"
+else pago RECHAZADO
+  SP --> PC : pago rechazado
+  PC --> UI : "Pago rechazado, elegí otro medio"
+  note right of PD : sigue PENDIENTE_PAGO:\nno pasa a cocina
+end
+deactivate SP
+deactivate PC
+@enduml
