@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carta de platos · El restó de la 5</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="index.html"><span class="logo">5</span> El restó de la 5</a>
+    <span class="seccion">Carta de platos</span>
+  </header>
+
+  <main class="contenedor grilla">
+    <section class="panel" aria-labelledby="titulo-form">
+      <h2 id="titulo-form">Nuevo plato</h2>
+      <form id="form-plato" novalidate>
+        <input type="hidden" id="plato-id">
+        <label>Nombre
+          <input id="nombre" maxlength="80" placeholder="Ej.: Milanesa napolitana" required>
+        </label>
+        <label>Categoría
+          <select id="categoria" required></select>
+        </label>
+        <label>Descripción
+          <textarea id="descripcion" rows="2" maxlength="255" placeholder="Opcional"></textarea>
+        </label>
+        <label>Precio ($)
+          <input id="precio" type="number" min="1" step="1" placeholder="Ej.: 14500" required>
+        </label>
+        <div id="errores" class="errores" role="alert" hidden></div>
+        <div class="acciones">
+          <button type="submit" class="btn primario" id="btn-guardar">Agregar plato</button>
+          <button type="button" class="btn" id="btn-cancelar" hidden>Cancelar edición</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="titulo-carta">
+      <div class="cabecera-carta">
+        <h2 id="titulo-carta">Carta</h2>
+        <label class="toggle"><input type="checkbox" id="ver-todos"> Mostrar desactivados</label>
+      </div>
+      <div id="carta"><p class="vacio">Cargando…</p></div>
+    </section>
+  </main>
+
+  <div id="aviso" class="aviso" hidden></div>
+  <script src="js/carta.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+:root {
+  --oscuro: #1E1B24;
+  --texto: #2F2B36;
+  --suave: #6B6B76;
+  --fondo: #F6F5F8;
+  --tarjeta: #FFFFFF;
+  --borde: #E3E0E8;
+  --tomate: #E4572E;
+  --tomate-osc: #C2441F;
+  --verde: #2A9D8F;
+  --error: #B42318;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; color: var(--texto); background: var(--fondo); }
+.barra { background: var(--oscuro); color: #fff; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.marca { color: #fff; text-decoration: none; font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; }
+.logo { background: var(--tomate); width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; }
+.seccion { color: #D7D3DE; }
+.contenedor { max-width: 1150px; margin: 24px auto; padding: 0 16px; }
+.grilla { display: grid; grid-template-columns: 360px 1fr; gap: 24px; align-items: start; }
+.panel { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 20px; }
+h1 { margin: 8px 0 4px; } h2 { margin: 0 0 14px; font-size: 1.25rem; }
+.sub { color: var(--suave); margin: 0 0 20px; }
+label { display: block; font-weight: 600; font-size: .92rem; margin-bottom: 12px; }
+input, select, textarea { width: 100%; margin-top: 5px; padding: 10px 12px; border: 1px solid var(--borde); border-radius: 9px; font: inherit; font-weight: 400; background: #fff; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--tomate); border-color: transparent; }
+.acciones { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { border: 1px solid var(--borde); background: #fff; padding: 9px 14px; border-radius: 9px; font: inherit; font-weight: 600; cursor: pointer; }
+.btn:hover { background: var(--fondo); }
+.btn.primario { background: var(--tomate); border-color: var(--tomate); color: #fff; }
+.btn.primario:hover { background: var(--tomate-osc); }
+.btn.chico { padding: 5px 10px; font-size: .85rem; }
+.errores { background: #FEF3F2; color: var(--error); border-radius: 9px; padding: 10px 12px; margin-bottom: 12px; font-size: .92rem; }
+.cabecera-carta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.toggle { font-weight: 400; display: flex; gap: 6px; align-items: center; }
+.toggle input { width: auto; margin: 0; }
+.categoria h3 { margin: 18px 0 8px; font-size: 1rem; color: var(--tomate-osc); text-transform: uppercase; letter-spacing: .04em; }
+.plato { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--borde); }
+.plato:last-child { border-bottom: 0; }
+.plato .nombre { font-weight: 700; }
+.plato .desc { color: var(--suave); font-size: .9rem; }
+.plato .precio { font-weight: 700; white-space: nowrap; }
+.plato .botones { display: flex; gap: 6px; }
+.plato.inactivo .nombre, .plato.inactivo .precio { color: var(--suave); text-decoration: line-through; }
+.etiqueta { font-size: .75rem; background: var(--fondo); border: 1px solid var(--borde); border-radius: 99px; padding: 1px 8px; margin-left: 6px; color: var(--suave); text-decoration: none; display: inline-block; }
+.vacio { color: var(--suave); }
+.aviso { position: fixed; bottom: 20px; right: 20px; background: var(--verde); color: #fff; padding: 12px 18px; border-radius: 10px; font-weight: 600; box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+.modulos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.modulo { background: #fff; border: 1px solid var(--borde); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--texto); text-decoration: none; }
+.modulo span { color: var(--suave); font-size: .9rem; }
+.modulo.activo { border-color: var(--tomate); }
+.modulo.activo:hover { background: #FFF4F0; }
+.modulo.pendiente { opacity: .6; }
+@media (max-width: 820px) {
+  .grilla { grid-template-columns: 1fr; }
+  .barra { padding: 12px 16px; }
+  .plato { flex-wrap: wrap; }
+}

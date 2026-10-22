@@ -1,0 +1,16 @@
+{
+  "name": "resto-de-la-5",
+  "version": "0.1.0",
+  "description": "Sistema del restaurante El restó de la 5 - Modelos y Sistemas 7°2° EEST N°5",
+  "main": "backend/server.js",
+  "scripts": {
+    "db:init": "node database/init.js",
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mysql2": "^3.11.5"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
